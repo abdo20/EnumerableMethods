@@ -42,5 +42,19 @@ module Enumerable
 		end 
 		return bool
 	end
+
+	def my_any?(list)
+		#run a block on the list items and return true if any block is true-thy
+		my_each(list) do |i|
+			if block_given?
+				if yield(i)
+					return true
+				end
+			else
+				return true
+			end
+		end
+		return false
+	end
 end
 
