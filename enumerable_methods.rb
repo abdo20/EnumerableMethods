@@ -22,5 +22,18 @@ module Enumerable
 			curent_index+=1
 		end
 	end
+
+	def my_select(list)
+		#take a list and run a condition statement on each item and return a list of the items that match the condition
+		curent_index=0
+		new_list=Array.new
+		while curent_index<list.length do
+			if yield(list[curent_index])
+				new_list<<list[curent_index]
+			end
+			curent_index+=1
+		end
+		return new_list
+	end
 end
 
