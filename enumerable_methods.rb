@@ -25,15 +25,22 @@ module Enumerable
 
 	def my_select(list)
 		#take a list and run a condition statement on each item and return a list of the items that match the condition
-		curent_index=0
 		new_list=Array.new
-		while curent_index<list.length do
-			if yield(list[curent_index])
-				new_list<<list[curent_index]
+		my_each(list) do |i|
+			if yield(i)
+				new_list<<i
 			end
-			curent_index+=1
 		end
 		return new_list
+	end
+
+	def my_all?(list)
+		#run a condition statement on each item and return true if all items pass the condition false otherwise
+		bool=true
+		my_each(list) do |i|
+			yield(i) || bool=false
+		end 
+		return bool
 	end
 end
 
