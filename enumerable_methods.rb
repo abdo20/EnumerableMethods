@@ -65,5 +65,16 @@ module Enumerable
 		end
 		return bool
 	end
+
+	def my_count(list)
+		#count the items in the list that pass the condition statement
+		count=0
+		my_each(list) do |i|
+			if yield(i)
+				count+=1
+			end
+		end
+		return count
+	end
 end
 
