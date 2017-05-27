@@ -1,8 +1,8 @@
 module Enumerable
-	def my_each(list)
+	def my_each
 		# take a list and perform a certain action on each item in the list
-		for i in list
-			yield(i)
+		for i in 0...self.length
+			yield self[i]
 		end
 		# anther way using while loop
 		#curent_index=0
@@ -12,10 +12,10 @@ module Enumerable
 		#end
 	end
 
-	def my_each_with_index(list)
+	def my_each_with_index
 		# take a list and perform a certain action on each item and its index
-		for i in 0...list.length
-			yield(list[i],i)
+		for i in 0...self.length
+			yield(self[i],i)
 		end
 		# anther way using while loop
 		#curent_index=0
@@ -25,76 +25,82 @@ module Enumerable
 		#end
 	end
 
-	def my_select(list)
+	def my_select
 		#take a list and run a condition statement on each item and return a list of the items that match the condition
 		new_list=Array.new
-		my_each(list) do |i|
-			if yield(i)
+		self.my_each do |i|
+			if yield(self[i])
 				new_list<<i
 			end
 		end
 		return new_list
 	end
 
-	def my_all?(list)
+	def my_all?(&block)
 		#run a condition statement on each item and return true if all items pass the condition false otherwise
-		bool=true
-		my_each(list) do |i|
-			yield(i) || bool=false
-		end 
-		return bool
+		unless block_given?
+			block= lambda{|x| x}
+		end
+		return my_select(&block).length==self.length
 	end
 
-	def my_any?(list)
+	def my_any?(&block)
 		#run a block on the list items and return true if any block is true-thy
-		my_each(list) do |i|
-			if block_given?
-				if yield(i)
-					return true
-				end
-			else
-				return true
-			end
+		unless block_given?
+			block= lambda {|x| x}
 		end
-		return false
+		return my_select(&block).length>0
 	end
 
-	def my_none?(list)
+	def my_none?(&blcok)
 		#run a statement in every item in the list and return true if none of the blocks return true
-		bool=true
-		my_each(list) do |i|
-			yield(i) && bool=false
+		unless block_given?
+			block= lambda {|x| x}
 		end
-		return bool
+		return my_select(&block).length == 0
 	end
 
-	def my_count(list)
+	def my_count(num=nil, &block)
 		#count the items in the list that pass the condition statement
-		count=0
-		my_each(list) do |i|
-			if yield(i)
-				count+=1
+		unless num || block_given?
+			return self.length
+		end
+		if num
+			return self.my_select{|i| i==num}.length
+		elsif block_given?
+			return self.my_select(&block).length
+		end
+	end
+
+	def my_map(p=nil)
+		#return a new list of all items after get passed in the block
+		result=Array.new
+		self.each do |i|
+			if block_given? && p==nil
+				result<<yield(self[i])
+			elsif !block_given? && p==nil
+				return self.to_enum
 			end
 		end
-		return count
+		return result
 	end
 
-	def my_map(list)
-		#return a new list of all items after get passed in the block
-		new_list=Array.new
-		my_each(list) do |i|
-			new_list<<yield(i)
-		end
-		return new_list
-	end
-
-	def my_inject(list)
+	def my_inject(initial=nil)
 		#return a sum value for all the items values after passing the block
-		total=0
-		my_each(list) do |i|
-			total+=yield(total,i)-total
+		if initial==nil
+			accumulator=self[i]
+		else
+			accumulator=initial
 		end
-		return total
+		self.my_each do |value|
+			accumulator=yield(accumulator, value)
+		end
+		return accumulator
+	end
+
+	def multiply_els(list)
+		#multiplies all the elements of the array together by using #my_inject
+		return list.my_inject(1){|product, value| product*value}
 	end
 end
 
