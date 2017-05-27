@@ -56,5 +56,14 @@ module Enumerable
 		end
 		return false
 	end
+
+	def my_none?(list)
+		#run a statement in every item in the list and return true if none of the blocks return true
+		bool=true
+		my_each(list) do |i|
+			yield(i) && bool=false
+		end
+		return bool
+	end
 end
 
